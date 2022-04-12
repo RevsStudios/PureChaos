@@ -1,0 +1,14 @@
+{
+  "parent": "item/handheld_rod",
+  "textures": {
+    "layer0": "purechaos:item/meganium_fishing_rod"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "cast": 1
+      },
+      "model": "purechaos:item/meganium_fishing_rod_cast"
+    }
+  ]
+}

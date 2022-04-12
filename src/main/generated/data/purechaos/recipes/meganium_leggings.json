@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "#$#",
+    "# #"
+  ],
+  "key": {
+    "#": {
+      "item": "purechaos:meganium_ingot"
+    },
+    "$": {
+      "item": "chaosawakens:ultimate_leggings"
+    }
+  },
+  "result": {
+    "item": "purechaos:meganium_leggings"
+  }
+}

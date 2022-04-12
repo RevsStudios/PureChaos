@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " #^",
+    "%$^",
+    " #^"
+  ],
+  "key": {
+    "#": {
+      "item": "purechaos:meganium_ingot"
+    },
+    "$": {
+      "item": "chaosawakens:ultimate_bow"
+    },
+    "%": {
+      "item": "purechaos:galactite"
+    },
+    "^": {
+      "item": "minecraft:string"
+    }
+  },
+  "result": {
+    "item": "purechaos:meganium_bow"
+  }
+}

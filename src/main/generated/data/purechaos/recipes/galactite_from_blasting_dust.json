@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:blasting",
+  "ingredient": {
+    "item": "purechaos:galactite_dust"
+  },
+  "result": "purechaos:galactite",
+  "experience": 0.1,
+  "cookingtime": 100
+}

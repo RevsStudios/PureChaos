@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "  #",
+    " $^",
+    "% ^"
+  ],
+  "key": {
+    "#": {
+      "item": "purechaos:meganium_ingot"
+    },
+    "$": {
+      "item": "chaosawakens:ultimate_fishing_rod"
+    },
+    "%": {
+      "item": "purechaos:galactite_rod"
+    },
+    "^": {
+      "item": "minecraft:string"
+    }
+  },
+  "result": {
+    "item": "purechaos:meganium_fishing_rod"
+  }
+}

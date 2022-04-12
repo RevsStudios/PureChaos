@@ -1,0 +1,54 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "purechaos:meganium_pickaxe"
+    ]
+  },
+  "criteria": {
+    "has_meganium_ingot": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "purechaos:meganium_ingot"
+          }
+        ]
+      }
+    },
+    "has_ultimate_pickaxe": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "chaosawakens:ultimate_pickaxe"
+          }
+        ]
+      }
+    },
+    "has_galactite_rod": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "purechaos:galactite_rod"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "purechaos:meganium_pickaxe"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_meganium_ingot",
+      "has_ultimate_pickaxe",
+      "has_galactite_rod",
+      "has_the_recipe"
+    ]
+  ]
+}

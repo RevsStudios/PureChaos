@@ -1,0 +1,6 @@
+{
+  "parent": "item/bow",
+  "textures": {
+    "layer0": "purechaos:item/meganium_bow_pulling_0"
+  }
+}

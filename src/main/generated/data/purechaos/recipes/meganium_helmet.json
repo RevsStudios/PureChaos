@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "#$#"
+  ],
+  "key": {
+    "#": {
+      "item": "purechaos:meganium_ingot"
+    },
+    "$": {
+      "item": "chaosawakens:ultimate_helmet"
+    }
+  },
+  "result": {
+    "item": "purechaos:meganium_helmet"
+  }
+}

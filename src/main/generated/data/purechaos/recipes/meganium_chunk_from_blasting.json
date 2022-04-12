@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:blasting",
+  "ingredient": {
+    "item": "purechaos:meganium_ore"
+  },
+  "result": "purechaos:meganium_chunk",
+  "experience": 0.1,
+  "cookingtime": 100
+}

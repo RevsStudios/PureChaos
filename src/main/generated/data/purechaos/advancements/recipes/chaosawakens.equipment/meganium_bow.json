@@ -1,0 +1,54 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "purechaos:meganium_bow"
+    ]
+  },
+  "criteria": {
+    "has_meganium_ingot": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "purechaos:meganium_ingot"
+          }
+        ]
+      }
+    },
+    "has_ultimate_bow": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "chaosawakens:ultimate_bow"
+          }
+        ]
+      }
+    },
+    "has_galactite_rod": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "purechaos:galactite_rod"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "purechaos:meganium_bow"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_meganium_ingot",
+      "has_ultimate_bow",
+      "has_galactite_rod",
+      "has_the_recipe"
+    ]
+  ]
+}

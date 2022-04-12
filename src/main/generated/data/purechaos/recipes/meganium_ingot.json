@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "purechaos:meganium_chunk"
+    },
+    {
+      "item": "purechaos:meganium_chunk"
+    },
+    {
+      "item": "minecraft:iron_ingot"
+    }
+  ],
+  "result": {
+    "item": "purechaos:meganium_ingot"
+  }
+}
