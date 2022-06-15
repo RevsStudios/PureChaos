@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "purechaos:meganium_block"
+    }
+  ],
+  "result": {
+    "item": "purechaos:meganium_ingot",
+    "count": 9
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "purechaos:block/galactite_dust_block"
+  }
+}

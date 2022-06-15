@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "purechaos:meganium_block"
+    ]
+  },
+  "criteria": {
+    "has_meganium_ingot": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "purechaos:meganium_ingot"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "purechaos:meganium_block"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_meganium_ingot",
+      "has_the_recipe"
+    ]
+  ]
+}

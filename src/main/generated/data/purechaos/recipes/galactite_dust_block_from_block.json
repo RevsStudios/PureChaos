@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "purechaos:galactite_dust_block"
+    }
+  ],
+  "result": {
+    "item": "purechaos:galactite_dust",
+    "count": 9
+  }
+}

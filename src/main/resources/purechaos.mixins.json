@@ -1,0 +1,11 @@
+{
+	"required": false,
+	"package": "cf.revstudios.purechaos.mixins",
+	"compatibilityLevel": "JAVA_8",
+	"mixins": [],
+	"client": [],
+	"refmap": "purechaos.refmap.json",
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

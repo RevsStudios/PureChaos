@@ -1,27 +1,13 @@
 package cf.revstudios.purechaos.client;
 
 import cf.revstudios.purechaos.registry.PCItems;
-import io.github.chaosawakens.client.entity.render.*;
-import io.github.chaosawakens.common.entity.EntEntity;
 import io.github.chaosawakens.common.items.UltimateFishingRodItem;
-import io.github.chaosawakens.common.registry.*;
-import net.minecraft.client.renderer.Atlases;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.client.renderer.tileentity.SignTileEntityRenderer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemModelsProperties;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 public class ClientSetupEvent {
-    public static void register() {
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientSetupEvent::onFMLClientSetupEvent);
-    }
-
     public static void onFMLClientSetupEvent(FMLClientSetupEvent event) {
         ItemModelsProperties.register(PCItems.MEGANIUM_BOW.get(), new ResourceLocation("pull"),
                 (stack, world, living) -> {

@@ -33,60 +33,58 @@ import java.util.Optional;
 
 @Mod(PureChaos.MODID)
 public class PureChaos {
-    public static final String MODID = "purechaos";
-    public static final String MODNAME = "Pure Chaos";
-    public static final Logger LOGGER = LogManager.getLogger();
-    public static ArtifactVersion VERSION = null;
+	public static final String MODID = "purechaos";
+	public static final String MODNAME = "Pure Chaos";
+	public static final Logger LOGGER = LogManager.getLogger();
+	public static ArtifactVersion VERSION = null;
 
+	public PureChaos() {
+		GeckoLibMod.DISABLE_IN_DEV = true;
+		GeckoLib.initialize();
 
-    public PureChaos() {
-        GeckoLibMod.DISABLE_IN_DEV = true;
-        GeckoLib.initialize();
+		Optional<? extends ModContainer> opt = ModList.get().getModContainerById(MODID);
+		if (opt.isPresent()) {
+			IModInfo modInfo = opt.get().getModInfo();
+			VERSION = modInfo.getVersion();
+		} else LOGGER.warn("Cannot get version from mod info");
 
-        Optional<? extends ModContainer> opt = ModList.get().getModContainerById(MODID);
-        if (opt.isPresent()) {
-            IModInfo modInfo = opt.get().getModInfo();
-            VERSION = modInfo.getVersion();
-        } else {
-            LOGGER.warn("Cannot get version from mod info");
-        }
+		LOGGER.debug(MODNAME + " is an Addon for: " + ChaosAwakens.MODNAME + "!");
+		LOGGER.debug("The Mod Version of " + MODNAME + " is: " + VERSION);
+		LOGGER.debug("The Mod ID of " + MODNAME + " is: " + MODID);
+		LOGGER.debug("The Mod ID of " + ChaosAwakens.MODNAME + " is: " + ChaosAwakens.MODID);
 
-        LOGGER.debug(MODNAME + " is an Addon for: " + ChaosAwakens.MODNAME + "!");
-        LOGGER.debug("The Mod Version of " + MODNAME + " is: " + VERSION);
-        LOGGER.debug("The Mod ID of " + MODNAME + " is: " + MODID);
-        LOGGER.debug("The Mod ID of " + ChaosAwakens.MODNAME + " is: " + ChaosAwakens.MODID);
+		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        
-        //Register to the mod event bus
-        eventBus.addListener(this::gatherData);
+		//Register to the mod event bus
+		eventBus.addListener(this::gatherData);
 
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, PCConfig.COMMON_SPEC);
+		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, PCConfig.COMMON_SPEC);
 
-        if (FMLEnvironment.dist == Dist.CLIENT) eventBus.addListener(ClientSetupEvent::onFMLClientSetupEvent);
+		if (FMLEnvironment.dist == Dist.CLIENT) eventBus.addListener(ClientSetupEvent::onFMLClientSetupEvent);
 
-        //Register the deferred registers
-        PCBlocks.ITEM_BLOCKS.register(eventBus);
-        PCBlocks.BLOCKS.register(eventBus);
-        PCEntityTypes.ENTITY_TYPES.register(eventBus);
-        PCItems.ITEMS.register(eventBus);
+		//Register the deferred registers
+		PCBlocks.ITEM_BLOCKS.register(eventBus);
+		PCBlocks.BLOCKS.register(eventBus);
+		PCEntityTypes.ENTITY_TYPES.register(eventBus);
+		PCItems.ITEMS.register(eventBus);
 
-        //Register to the forge event bus
-        IEventBus forgeBus = MinecraftForge.EVENT_BUS;
-        forgeBus.addListener(EventPriority.HIGH, BiomeLoadEventSubscriber::onBiomeLoadingEvent);
-        forgeBus.register(this);
-    }
+		//Register to the forge event bus
+		IEventBus forgeBus = MinecraftForge.EVENT_BUS;
+		forgeBus.addListener(EventPriority.HIGH, BiomeLoadEventSubscriber::onBiomeLoadingEvent);
+		forgeBus.register(this);
+	}
 
-    private void gatherData(final GatherDataEvent event) {
-        DataGenerator dataGenerator = event.getGenerator();
-        final ExistingFileHelper existing = event.getExistingFileHelper();
-
-        if (event.includeServer()) {
-            dataGenerator.addProvider(new PCLootTableProvider(dataGenerator));
-            dataGenerator.addProvider(new PCBlockModelProvider(dataGenerator, MODID, existing));
-            dataGenerator.addProvider(new PCItemModelGenerator(dataGenerator, existing));
-            dataGenerator.addProvider(new PCBlockStateProvider(dataGenerator, MODID, existing));
-            dataGenerator.addProvider(new PCRecipeProvider(dataGenerator));
-        }
-    }
+	private void gatherData(final GatherDataEvent event) {
+		DataGenerator dataGenerator = event.getGenerator();
+		final ExistingFileHelper existing = event.getExistingFileHelper();
+		if (event.includeClient()) {
+			dataGenerator.addProvider(new PCBlockModelProvider(dataGenerator, MODID, existing));
+			dataGenerator.addProvider(new PCItemModelGenerator(dataGenerator, existing));
+			dataGenerator.addProvider(new PCBlockStateProvider(dataGenerator, MODID, existing));
+		}
+		if (event.includeServer()) {
+			dataGenerator.addProvider(new PCLootTableProvider(dataGenerator));
+			dataGenerator.addProvider(new PCRecipeProvider(dataGenerator));
+		}
+	}
 }

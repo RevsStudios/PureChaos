@@ -2,7 +2,6 @@ package cf.revstudios.purechaos.entity.projectile;
 
 import cf.revstudios.purechaos.registry.PCItems;
 import io.github.chaosawakens.ChaosAwakens;
-import io.github.chaosawakens.common.registry.CAItems;
 import io.github.chaosawakens.common.registry.CALootTables;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.BlockState;
@@ -53,7 +52,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public class MeganiumFishingBobberEntity extends FishingBobberEntity implements IEntityAdditionalSpawnData{
+// Todo: Replace this with Updated Chaos Awakens Version.
+public class MeganiumFishingBobberEntity extends FishingBobberEntity implements IEntityAdditionalSpawnData {
 	private final Random syncronizedRandom = new Random();
 	private int outOfLiquidTime;
 	private boolean biting;
@@ -777,5 +777,4 @@ public class MeganiumFishingBobberEntity extends FishingBobberEntity implements 
 	@Override
 	public void readSpawnData(PacketBuffer additionalData) {
 	}
-
 }
