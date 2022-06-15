@@ -7,7 +7,6 @@ import net.minecraft.item.crafting.Ingredient;
 import java.util.function.Supplier;
 
 // Todo: Replace this with Single File.
-
 public enum PCItemTier implements IItemTier {
 	// Harvest level, Max uses, Efficiency, Damage, Enchantability
 	TOOL_MEGANIUM(7, 3600, 30, 46, 64, () -> Ingredient.of(PCItems.MEGANIUM_INGOT.get()));

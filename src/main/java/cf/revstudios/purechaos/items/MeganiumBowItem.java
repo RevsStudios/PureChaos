@@ -1,7 +1,7 @@
 package cf.revstudios.purechaos.items;
 
 import cf.revstudios.purechaos.config.PCConfig;
-import io.github.chaosawakens.common.config.CAConfig;
+import io.github.chaosawakens.common.config.CACommonConfig;
 import io.github.chaosawakens.common.entity.projectile.UltimateArrowEntity;
 import io.github.chaosawakens.common.items.UltimateBowItem;
 import net.minecraft.enchantment.EnchantmentData;
@@ -36,14 +36,14 @@ public class MeganiumBowItem extends UltimateBowItem {
 				arrowEntity.setCritArrow(true);
 				arrowEntity.setSecondsOnFire(EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FLAMING_ARROWS, stack) > 0 ? 250 : 75);
 				int powerLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.POWER_ARROWS, stack);
-				if (!(Boolean) CAConfig.COMMON.enableAutoEnchanting.get()) {
+				if (!(Boolean) CACommonConfig.COMMON.enableAutoEnchanting.get()) {
 					arrowEntity.setBaseDamage(PCConfig.COMMON.meganiumBowArrowBaseDamage.get() + (double)powerLevel * PCConfig.COMMON.meganiumBowArrowDamageMultiplier.get() + 2.0D);
 				} else {
 					arrowEntity.setBaseDamage(PCConfig.COMMON.meganiumBowArrowBaseDamage.get() + 3.0D);
 				}
 
 				int k = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.PUNCH_ARROWS, stack);
-				arrowEntity.setKnockback(!(Boolean)CAConfig.COMMON.enableAutoEnchanting.get() ? k + 1 : 1);
+				arrowEntity.setKnockback(!(Boolean)CACommonConfig.COMMON.enableAutoEnchanting.get() ? k + 1 : 1);
 				if (!playerentity.isCreative()) {
 					stack.hurtAndBreak(1, entityLiving, (entity) -> entity.broadcastBreakEvent(EquipmentSlotType.MAINHAND));
 				}

@@ -4,6 +4,7 @@ import cf.revstudios.purechaos.PureChaos;
 import cf.revstudios.purechaos.config.PCConfig;
 import cf.revstudios.purechaos.enums.PCItemTier;
 import cf.revstudios.purechaos.enums.PCArmorMaterial;
+import cf.revstudios.purechaos.items.MeganiumBattleAxeItem;
 import cf.revstudios.purechaos.items.MeganiumBowItem;
 import cf.revstudios.purechaos.items.MeganiumFishingRodItem;
 import io.github.chaosawakens.common.items.*;
@@ -47,7 +48,7 @@ public class PCItems {
 			new EnchantmentData[]{new EnchantmentData(Enchantments.POWER_ARROWS, 5), new EnchantmentData(Enchantments.FLAMING_ARROWS, 1), new EnchantmentData(Enchantments.PUNCH_ARROWS, 2), new EnchantmentData(Enchantments.INFINITY_ARROWS, 1)}));
 	public static final RegistryObject<MeganiumFishingRodItem> MEGANIUM_FISHING_ROD = ITEMS.register("meganium_fishing_rod", () -> new MeganiumFishingRodItem(new Item.Properties().rarity(RARITY_MEGANIUM).tab(CAItemGroups.EQUIPMENT).stacksTo(1).durability(1024),
 			new EnchantmentData[]{new EnchantmentData(Enchantments.UNBREAKING, 3)}));
-	public static final RegistryObject<EnchantedExtendedHitWeaponItem> MEGANIUM_BATTLE_AXE = ITEMS.register("meganium_battle_axe", () -> new EnchantedExtendedHitWeaponItem(PCItemTier.TOOL_MEGANIUM, PCConfig.COMMON.meganiumBattleAxeDamage.get() - 47, -3.35F, 0F, 0F, new Item.Properties().rarity(RARITY_MEGANIUM).tab(CAItemGroups.EQUIPMENT),
+	public static final RegistryObject<MeganiumBattleAxeItem> MEGANIUM_BATTLE_AXE = ITEMS.register("meganium_battle_axe", () -> new MeganiumBattleAxeItem(PCItemTier.TOOL_MEGANIUM, PCConfig.COMMON.meganiumBattleAxeDamage.get() - 47, -3.35F, 8F, 0F, new Item.Properties().rarity(RARITY_MEGANIUM).tab(CAItemGroups.EQUIPMENT),
 			new EnchantmentData[]{new EnchantmentData(Enchantments.MOB_LOOTING, 3), new EnchantmentData(Enchantments.UNBREAKING, 3)}));
 
 	public static final RegistryObject<EnchantedArmorItem> MEGANIUM_HELMET = ITEMS.register("meganium_helmet", () -> new EnchantedArmorItem(PCArmorMaterial.MEGANIUM, EquipmentSlotType.HEAD, new Item.Properties().rarity(RARITY_MEGANIUM).tab(CAItemGroups.EQUIPMENT),

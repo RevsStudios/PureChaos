@@ -2,7 +2,7 @@ package cf.revstudios.purechaos.items;
 
 import cf.revstudios.purechaos.entity.projectile.MeganiumFishingBobberEntity;
 import io.github.chaosawakens.api.IAutoEnchantable;
-import io.github.chaosawakens.common.config.CAConfig;
+import io.github.chaosawakens.common.config.CACommonConfig;
 import io.github.chaosawakens.common.registry.CADimensions;
 import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -27,7 +27,7 @@ public class MeganiumFishingRodItem extends FishingRodItem implements IAutoEncha
 	public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> items) {
 		if (this.allowdedIn(group)) {
 			ItemStack stack = new ItemStack(this);
-			if (CAConfig.COMMON.enableAutoEnchanting.get())
+			if (CACommonConfig.COMMON.enableAutoEnchanting.get())
 				for (EnchantmentData enchant : enchantments) {
 					stack.enchant(enchant.enchantment, enchant.level);
 				}
@@ -37,7 +37,7 @@ public class MeganiumFishingRodItem extends FishingRodItem implements IAutoEncha
 
 	@Override
 	public void onCraftedBy(ItemStack stack, World worldIn, PlayerEntity playerIn) {
-		if (CAConfig.COMMON.enableAutoEnchanting.get())
+		if (CACommonConfig.COMMON.enableAutoEnchanting.get())
 			for (EnchantmentData enchant : enchantments) {
 				stack.enchant(enchant.enchantment, enchant.level);
 			}
@@ -77,6 +77,6 @@ public class MeganiumFishingRodItem extends FishingRodItem implements IAutoEncha
 
 	@Override
 	public boolean isFoil(ItemStack stack) {
-		return CAConfig.COMMON.enableAutoEnchanting.get() && super.isFoil(stack) || super.isFoil(stack);
+		return CACommonConfig.COMMON.enableAutoEnchanting.get() && super.isFoil(stack) || super.isFoil(stack);
 	}
 }
