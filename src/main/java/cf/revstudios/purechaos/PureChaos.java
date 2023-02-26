@@ -5,6 +5,7 @@ import cf.revstudios.purechaos.config.PCConfig;
 import cf.revstudios.purechaos.data.*;
 import cf.revstudios.purechaos.registry.PCBlocks;
 import cf.revstudios.purechaos.registry.PCEntityTypes;
+import cf.revstudios.purechaos.registry.PCGlobalLootModifiers;
 import cf.revstudios.purechaos.registry.PCItems;
 import cf.revstudios.purechaos.worldgen.BiomeLoadEventSubscriber;
 import io.github.chaosawakens.ChaosAwakens;
@@ -67,6 +68,7 @@ public class PureChaos {
 		PCBlocks.BLOCKS.register(eventBus);
 		PCEntityTypes.ENTITY_TYPES.register(eventBus);
 		PCItems.ITEMS.register(eventBus);
+		PCGlobalLootModifiers.LOOT_MODIFIERS.register(eventBus);
 
 		//Register to the forge event bus
 		IEventBus forgeBus = MinecraftForge.EVENT_BUS;

@@ -6,7 +6,7 @@ buildscript {
     }
     dependencies {
         classpath(group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true)
-        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
+        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7.+'
     }
 }
 
@@ -27,9 +27,6 @@ minecraft {
     runs {
         client {
             workingDirectory project.file('run')
-            arg "-mixin.config=purechaos.mixins.json"
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             property 'forge.logging.markers', 'SCAN'
             property 'forge.logging.console.level', 'debug'
             mods {
@@ -40,9 +37,6 @@ minecraft {
         }
         server {
             workingDirectory project.file('run')
-            arg "-mixin.config=purechaos.mixins.json"
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             property 'forge.logging.markers', 'SCAN'
             property 'forge.logging.console.level', 'debug'
             mods {
@@ -53,9 +47,6 @@ minecraft {
         }
         data {
             workingDirectory project.file('run')
-            arg "-mixin.config=purechaos.mixins.json"
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
             args '--mod', 'purechaos', '--all', '--output', file('src/main/generated/'), '--existing', file('src/main/resources/')
@@ -72,14 +63,8 @@ sourceSets {
     main.resources.srcDirs += 'src/main/generated'
 }
 
-mixin {
-    add sourceSets.main, 'purechaos.refmap.json'
-    config 'purechaos.mixins.json'
-}
-
 dependencies {
     minecraft "net.minecraftforge:forge:${project.minecraftVersion}-${project.forgeVersion}"
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
     implementation fg.deobf("io.github:ChaosAwakens:1.16.5-${project.chaosawakens}")
     implementation fg.deobf("software.bernie.geckolib:geckolib-forge-1.16.5:${project.geckolib}")
@@ -92,8 +77,6 @@ dependencies {
 
     implementation fg.deobf("curse.maven:configured-457570:${project.configured}")
     implementation fg.deobf("curse.maven:catalogue-459701:${project.catalogue}")
-
-    implementation fg.deobf("curse.maven:attributefix-280510:${project.attributefix}")
 
     implementation fg.deobf("curse.maven:worldedit-225608:${project.worldedit}")
 
@@ -130,8 +113,7 @@ jar {
                 "Implementation-Title"    : project.modName,
                 "Implementation-Vendor"    : "Revstudios",
                 "Implementation-Version"  : project.modVersion,
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                "MixinConfigs": "purechaos.mixins.json"
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
 }

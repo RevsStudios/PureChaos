@@ -25,6 +25,8 @@ public class PCConfig {
 		public final ConfigValue<Double> meganiumBowArrowDamageMultiplier;
 
 		public final ConfigValue<Boolean> enableOreGen;
+		public final ConfigValue<Boolean> enableOverworldOreGen;
+		public final ConfigValue<Boolean> enableMiningParadiseOreGen;
 		public final ConfigValue<Boolean> enableOreMeganiumGen;
 		public final ConfigValue<Boolean> enableOreGalactiteGen;
 
@@ -43,6 +45,8 @@ public class PCConfig {
 			builder.pop();
 			builder.push("World Generation");
 			enableOreGen = builder.define("Enable ore generation", true);
+			enableOverworldOreGen = builder.define("Enable Overworld ore generation", true);
+			enableMiningParadiseOreGen = builder.define("Enable Mining Paradise ore generation", true);
 			builder.push("Specific Ore Spawning");
 			enableOreMeganiumGen = builder.define("Meganium ore generation", true);
 			enableOreGalactiteGen = builder.define("Galactite ore generation", true);

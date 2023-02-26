@@ -1,4 +1,4 @@
-package cf.revstudios.purechaos.items;
+package cf.revstudios.purechaos.items.extended;
 
 import cf.revstudios.purechaos.enums.PCItemTier;
 import com.google.common.collect.ImmutableMultimap;
@@ -6,7 +6,8 @@ import com.google.common.collect.Multimap;
 import io.github.chaosawakens.api.IAutoEnchantable;
 import io.github.chaosawakens.api.IUtilityHelper;
 import io.github.chaosawakens.common.config.CACommonConfig;
-import io.github.chaosawakens.common.util.EnumUtils;
+import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.client.util.InputMappings;
 import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.enchantment.IVanishable;
 import net.minecraft.entity.LivingEntity;
@@ -22,17 +23,24 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityPredicates;
+import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
+import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.Lazy;
+import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.manager.AnimationData;
+import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import java.util.UUID;
 
-public class MeganiumBattleAxeItem extends AxeItem implements IAutoEnchantable, IVanishable, IUtilityHelper {
+public class MeganiumBattleAxeItem extends AxeItem implements IAutoEnchantable, IVanishable, IAnimatable, IUtilityHelper {
+	public AnimationFactory factory = new AnimationFactory(this);
 	public static final UUID REACH_MODIFIER = UUID.fromString("4B3447EE-EC65-11EC-8EA0-0242AC120002");
 	public static final UUID KB_MODIFIER = UUID.fromString("516858D0-EC65-11EC-8EA0-0242AC120002");
 	public static int attackDamage;
@@ -66,53 +74,78 @@ public class MeganiumBattleAxeItem extends AxeItem implements IAutoEnchantable, 
 		return slot == EquipmentSlotType.MAINHAND ? LAZY.get() : super.getAttributeModifiers(slot, stack);
 	}
 
+	@Override
 	public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
-		double reach = entity.getAttributeValue(ForgeMod.REACH_DISTANCE.get());
-		double reachSqr = reach * reach;
-		World world = entity.level;
-		Vector3d viewVec = entity.getViewVector(1.0F);
-		Vector3d eyeVec = entity.getEyePosition(1.0F);
-		Vector3d targetVec = eyeVec.add(viewVec.x * reach, viewVec.y * reach, viewVec.z * reach);
-		AxisAlignedBB bb = entity.getBoundingBox().expandTowards(viewVec.scale(reach)).inflate(4.0, 4.0, 4.0);
-		EntityRayTraceResult result = ProjectileHelper.getEntityHitResult(world, entity, eyeVec, targetVec, bb, EntityPredicates.NO_CREATIVE_OR_SPECTATOR);
-		if (result != null && result.getEntity() instanceof LivingEntity) {
-			LivingEntity target = (LivingEntity)result.getEntity();
-			double distanceToTargetSqr = entity.distanceToSqr(target);
-			boolean resultBool = (result != null ? target : null) != null;
-			if (resultBool && entity instanceof PlayerEntity && reachSqr >= distanceToTargetSqr) {
-				target.hurt(DamageSource.playerAttack((PlayerEntity)entity), (float)attackDamage);
-				this.hurtEnemy(stack, target, entity);
-			}
+		InputEvent.ClickInputEvent inputEvent = ForgeHooksClient.onClickInput(1, new KeyBinding("key.attack", InputMappings.Type.MOUSE, 0, "key.categories.gameplay"), Hand.MAIN_HAND);
+		if (entity instanceof PlayerEntity && inputEvent.isAttack()) {
+			double reach = entity.getAttributeValue(ForgeMod.REACH_DISTANCE.get());
+			double reachSqr = reach * reach;
+			World world = entity.level;
 
-			return super.onEntitySwing(stack, entity);
-		} else {
-			return false;
+			Vector3d viewVec = entity.getViewVector(1.0F);
+			Vector3d eyeVec = entity.getEyePosition(1.0F);
+			Vector3d targetVec = eyeVec.add(viewVec.x * reach, viewVec.y * reach, viewVec.z * reach);
+
+			AxisAlignedBB bb = entity.getBoundingBox().expandTowards(viewVec.scale(reach)).inflate(4.0D, 4.0D, 4.0D);
+			EntityRayTraceResult result = ProjectileHelper.getEntityHitResult(world, entity, eyeVec, targetVec, bb, EntityPredicates.NO_CREATIVE_OR_SPECTATOR);
+
+			if (result == null || !(result.getEntity() instanceof LivingEntity)) return false;
+
+			LivingEntity target = (LivingEntity) result.getEntity();
+
+			double distanceToTargetSqr = entity.distanceToSqr(target);
+
+			boolean resultBool = (result != null ? target : null) != null;
+
+			if (resultBool) {
+				if (reachSqr >= distanceToTargetSqr) {
+					target.hurt(DamageSource.playerAttack((PlayerEntity) entity), attackDamage);
+					this.hurtEnemy(stack, target, entity);
+				}
+			}
 		}
+		return super.onEntitySwing(stack, entity);
 	}
 
+	@Override
 	public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> items) {
-		if (this.allowdedIn(group)) {
+		if (allowdedIn(group)) {
 			ItemStack stack = new ItemStack(this);
 			if (CACommonConfig.COMMON.enableAutoEnchanting.get()) {
-				EnchantmentData[] var4 = this.enchantments;
-				int var5 = var4.length;
-
-				for(int var6 = 0; var6 < var5; ++var6) {
-					EnchantmentData enchant = var4[var6];
+				for (EnchantmentData enchant : enchantments) {
 					stack.enchant(enchant.enchantment, enchant.level);
 				}
 			}
-
 			items.add(stack);
 		}
-
 	}
 
+	@Override
+	public void onCraftedBy(ItemStack itemStack, World world, PlayerEntity playerEntity) {
+		if (CACommonConfig.COMMON.enableAutoEnchanting.get()) {
+			for (EnchantmentData enchant : enchantments) {
+				itemStack.enchant(enchant.enchantment, enchant.level);
+			}
+		}
+	}
+
+	@Override
 	public boolean isFoil(ItemStack stack) {
 		return CACommonConfig.COMMON.enableAutoEnchanting.get() && super.isFoil(stack) || super.isFoil(stack);
 	}
 
+	@Override
 	public EnchantmentData[] enchantments() {
 		return this.enchantments;
+	}
+
+	@Override
+	public void registerControllers(AnimationData data) {
+		// insert controllers here
+	}
+
+	@Override
+	public AnimationFactory getFactory() {
+		return this.factory;
 	}
 }

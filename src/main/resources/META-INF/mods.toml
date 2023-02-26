@@ -29,20 +29,13 @@ side="BOTH"
 [[dependencies.purechaos]]
 modId="chaosawakens"
 mandatory=true
-versionRange="[0.10,)"
+versionRange="[0.11,)"
 ordering="NONE"
 side="BOTH"
 
 [[dependencies.purechaos]]
 modId="geckolib3"
 mandatory=true
-versionRange="[3.0.77,)"
-ordering="NONE"
-side="BOTH"
-
-[[dependencies.purechaos]]
-modId="attributefix"
-mandatory=true
-versionRange="[10.1.4,)"
+versionRange="[3.0.92,)"
 ordering="NONE"
 side="BOTH"

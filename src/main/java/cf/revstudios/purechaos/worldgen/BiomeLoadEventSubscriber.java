@@ -2,6 +2,7 @@ package cf.revstudios.purechaos.worldgen;
 
 import cf.revstudios.purechaos.config.PCConfig;
 import cf.revstudios.purechaos.registry.PCConfiguredFeatures;
+import io.github.chaosawakens.common.registry.CABiomes;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStage;
@@ -25,13 +26,25 @@ public class BiomeLoadEventSubscriber {
 
 			if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.OVERWORLD)) {
 				if (PCConfig.COMMON.enableOreGen.get())
-					addOverworldOres(gen);
+					if (PCConfig.COMMON.enableOverworldOreGen.get())
+						addOverworldOres(gen);
+			}
+
+			if (BiomeDictionary.hasType(biome, CABiomes.Type.MINING_PARADISE)) {
+				if (PCConfig.COMMON.enableOreGen.get())
+					if (PCConfig.COMMON.enableMiningParadiseOreGen.get())
+						addMiningParadiseOres(gen);
 			}
 		}
 		
 		private static void addOverworldOres(BiomeGenerationSettingsBuilder gen) {
 			if (PCConfig.COMMON.enableOreMeganiumGen.get()) gen.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, PCConfiguredFeatures.ORE_MEGANIUM);
 			if (PCConfig.COMMON.enableOreGalactiteGen.get()) gen.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, PCConfiguredFeatures.ORE_GALACTITE);
+		}
+
+		private static void addMiningParadiseOres(BiomeGenerationSettingsBuilder gen) {
+			if (PCConfig.COMMON.enableOreMeganiumGen.get()) gen.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, PCConfiguredFeatures.MINING_ORE_MEGANIUM);
+			if (PCConfig.COMMON.enableOreGalactiteGen.get()) gen.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, PCConfiguredFeatures.MINING_ORE_GALACTITE);
 		}
 	}
 }
