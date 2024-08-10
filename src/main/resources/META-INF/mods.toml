@@ -1,14 +1,14 @@
 modLoader="javafml"
 loaderVersion="[36,)"
 issueTrackerURL="https://github.com/RevsStudios/PureChaos/issues"
-displayURL="https://revstudiosweb.weebly.com/pure-chaos.html"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/pure-chaos-chaos-awakens"
 license="All Rights Reserved."
 
 [[mods]]
 modId="purechaos"
 version="${file.jarVersion}"
 displayName="Pure Chaos"
-authors="ReVG08 and Blackout"
+authors="Blackout and ReVG08"
 description='''Some new Additions to Chaos Awakens!'''
 itemIcon="purechaos:meganium_pickaxe"
 
@@ -29,13 +29,13 @@ side="BOTH"
 [[dependencies.purechaos]]
 modId="chaosawakens"
 mandatory=true
-versionRange="[0.11,)"
+versionRange="[0.12,)"
 ordering="NONE"
 side="BOTH"
 
 [[dependencies.purechaos]]
 modId="geckolib3"
 mandatory=true
-versionRange="[3.0.92,)"
+versionRange="[3.0.94,3.0.98)"
 ordering="NONE"
 side="BOTH"

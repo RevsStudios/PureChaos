@@ -1,14 +1,19 @@
 package cf.revstudios.purechaos.client;
 
+import cf.revstudios.purechaos.client.entity.render.MeganiumBobberProjectileRenderer;
+import cf.revstudios.purechaos.items.MeganiumFishingRodItem;
+import cf.revstudios.purechaos.registry.PCEntityTypes;
 import cf.revstudios.purechaos.registry.PCItems;
-import io.github.chaosawakens.common.items.UltimateFishingRodItem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemModelsProperties;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 public class ClientSetupEvent {
     public static void onFMLClientSetupEvent(FMLClientSetupEvent event) {
+        RenderingRegistry.registerEntityRenderingHandler(PCEntityTypes.MEGANIUM_FISHING_BOBBER.get(), MeganiumBobberProjectileRenderer::new);
+
         ItemModelsProperties.register(PCItems.MEGANIUM_BOW.get(), new ResourceLocation("pull"),
                 (stack, world, living) -> {
                     if (living == null) {
@@ -25,7 +30,7 @@ public class ClientSetupEvent {
             } else {
                 boolean flag = p_239422_2_.getMainHandItem() == p_239422_0_;
                 boolean flag1 = p_239422_2_.getOffhandItem() == p_239422_0_;
-                if (p_239422_2_.getMainHandItem().getItem() instanceof UltimateFishingRodItem) {
+                if (p_239422_2_.getMainHandItem().getItem() instanceof MeganiumFishingRodItem) {
                     flag1 = false;
                 }
 

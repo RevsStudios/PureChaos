@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 // Todo: Replace this with Single File.
 public enum PCArmorMaterial implements IArmorMaterial {
 	//Name, Durability multiplier, Damage Reduction multiplier, Damage Reduction, Enchantability, Sound Events, Toughness, Knockback Resistance, Repair Material
-	MEGANIUM("meganium", 56, new int[]{7, 11, 13, 7}, 80, SoundEvents.ARMOR_EQUIP_NETHERITE, 5f, 0.175f,
+	MEGANIUM("meganium", 404, new int[]{7, 11, 13, 7}, 80, SoundEvents.ARMOR_EQUIP_NETHERITE, 5f, 0.175f,
 			() -> Ingredient.of(PCItems.MEGANIUM_INGOT.get()));
 
 	private final int[] MAX_DAMAGE_ARRAY = new int[]{13, 15, 16, 11};

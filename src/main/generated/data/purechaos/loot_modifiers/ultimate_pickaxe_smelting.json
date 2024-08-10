@@ -1,0 +1,11 @@
+{
+  "conditions": [
+    {
+      "condition": "minecraft:match_tool",
+      "predicate": {
+        "item": "purechaos:meganium_pickaxe"
+      }
+    }
+  ],
+  "type": "chaosawakens:ultimate_pickaxe_smelting"
+}

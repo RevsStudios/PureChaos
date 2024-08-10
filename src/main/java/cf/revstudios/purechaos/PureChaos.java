@@ -1,11 +1,11 @@
 package cf.revstudios.purechaos;
 
 import cf.revstudios.purechaos.client.ClientSetupEvent;
-import cf.revstudios.purechaos.config.PCConfig;
+import cf.revstudios.purechaos.config.PCCommonConfig;
+import cf.revstudios.purechaos.config.PCServerConfig;
 import cf.revstudios.purechaos.data.*;
 import cf.revstudios.purechaos.registry.PCBlocks;
 import cf.revstudios.purechaos.registry.PCEntityTypes;
-import cf.revstudios.purechaos.registry.PCGlobalLootModifiers;
 import cf.revstudios.purechaos.registry.PCItems;
 import cf.revstudios.purechaos.worldgen.BiomeLoadEventSubscriber;
 import io.github.chaosawakens.ChaosAwakens;
@@ -27,7 +27,6 @@ import net.minecraftforge.forgespi.language.IModInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
-import software.bernie.example.GeckoLibMod;
 import software.bernie.geckolib3.GeckoLib;
 
 import java.util.Optional;
@@ -40,7 +39,6 @@ public class PureChaos {
 	public static ArtifactVersion VERSION = null;
 
 	public PureChaos() {
-		GeckoLibMod.DISABLE_IN_DEV = true;
 		GeckoLib.initialize();
 
 		Optional<? extends ModContainer> opt = ModList.get().getModContainerById(MODID);
@@ -59,7 +57,8 @@ public class PureChaos {
 		//Register to the mod event bus
 		eventBus.addListener(this::gatherData);
 
-		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, PCConfig.COMMON_SPEC);
+		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, PCCommonConfig.COMMON_SPEC);
+		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, PCServerConfig.SERVER_SPEC);
 
 		if (FMLEnvironment.dist == Dist.CLIENT) eventBus.addListener(ClientSetupEvent::onFMLClientSetupEvent);
 
@@ -87,6 +86,7 @@ public class PureChaos {
 		if (event.includeServer()) {
 			dataGenerator.addProvider(new PCLootTableProvider(dataGenerator));
 			dataGenerator.addProvider(new PCRecipeProvider(dataGenerator));
+			dataGenerator.addProvider(new PCGlobalLootModifierProvider(dataGenerator));
 		}
 	}
 }

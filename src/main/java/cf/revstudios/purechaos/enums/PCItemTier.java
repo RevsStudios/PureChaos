@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 // Todo: Replace this with Single File.
 public enum PCItemTier implements IItemTier {
 	// Harvest level, Max uses, Efficiency, Damage, Enchantability
-	TOOL_MEGANIUM(7, 3600, 30, 46, 64, () -> Ingredient.of(PCItems.MEGANIUM_INGOT.get()));
+	TOOL_MEGANIUM(7, 7200, 30, 46, 64, () -> Ingredient.of(PCItems.MEGANIUM_INGOT.get()));
 
 	private final int harvestLevel;
 	private final int maxUses;
@@ -55,5 +55,10 @@ public enum PCItemTier implements IItemTier {
 	@Override
 	public Ingredient getRepairIngredient() {
 		return this.repairMaterial.get();
+	}
+
+	// Copy from Chaos Awakens
+	public int getAttackDamageMod() {
+		return (int) (getAttackDamageBonus() - (getAttackDamageBonus() + 1)) - 2;
 	}
 }

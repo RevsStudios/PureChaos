@@ -7,7 +7,6 @@ import io.github.chaosawakens.api.item.IAutoEnchantable;
 import io.github.chaosawakens.api.item.ICATieredItem;
 import io.github.chaosawakens.common.util.EntityUtil;
 import io.github.chaosawakens.manager.CAConfigManager;
-import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attribute;
@@ -16,19 +15,15 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
-import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.util.Lazy;
-import net.minecraftforge.event.ForgeEventFactory;
 
 import java.util.function.Supplier;
 
-public class MeganiumHoeItem extends HoeItem implements IAutoEnchantable, ICATieredItem {
+public class MeganiumSwordItem extends SwordItem implements IAutoEnchantable, ICATieredItem {
 	private final Supplier<EnchantmentData[]> enchantments;
 	private Supplier<IntValue> configDmg;
 	private float attackSpeed;
@@ -43,52 +38,12 @@ public class MeganiumHoeItem extends HoeItem implements IAutoEnchantable, ICATie
 		return attrModMapBuilder.build();
 	});
 
-	public MeganiumHoeItem(PCItemTier pTier, Supplier<IntValue> configDmg, float pAttackSpeedModifier, Properties pProperties, Supplier<EnchantmentData[]> enchantments) {
+	public MeganiumSwordItem(PCItemTier pTier, Supplier<IntValue> configDmg, float pAttackSpeedModifier, Item.Properties pProperties, Supplier<EnchantmentData[]> enchantments) {
 		super(pTier, pTier.getAttackDamageMod(), pAttackSpeedModifier, pProperties);
 		this.configDmg = configDmg;
 		this.attackSpeed = pAttackSpeedModifier;
 		this.reach = 0;
 		this.enchantments = enchantments;
-	}
-
-	public ActionResultType useOn(ItemUseContext context) {
-		World curWorld = context.getLevel();
-		BlockPos eventPos = context.getClickedPos();
-		int hoeUseHook = ForgeEventFactory.onHoeUse(context);
-		if (hoeUseHook != 0) {
-			return hoeUseHook > 0 ? ActionResultType.SUCCESS : ActionResultType.FAIL;
-		} else {
-			if (context.getClickedFace() != Direction.DOWN && curWorld.isEmptyBlock(eventPos.above())) {
-				BlockState modifiedState = curWorld.getBlockState(eventPos).getToolModifiedState(curWorld, eventPos, context.getPlayer(), context.getItemInHand(), ToolType.HOE);
-				if (modifiedState != null) {
-					PlayerEntity curPlayer = context.getPlayer();
-					curWorld.playSound(curPlayer, eventPos, SoundEvents.HOE_TILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
-					if (!curWorld.isClientSide && curPlayer != null) {
-						context.getItemInHand().hurtAndBreak(1, curPlayer, (player) -> {
-							player.broadcastBreakEvent(context.getHand());
-						});
-					}
-
-					for(int x = -1; x < 2; ++x) {
-						for(int y = -1; y < 2; ++y) {
-							for(int z = -1; z < 2; ++z) {
-								BlockPos targetPos = new BlockPos(eventPos.getX() + x, eventPos.getY() + y, eventPos.getZ() + z);
-								if (curWorld.isEmptyBlock(targetPos.above())) {
-									modifiedState = curWorld.getBlockState(targetPos).getToolModifiedState(curWorld, targetPos, context.getPlayer(), context.getItemInHand(), ToolType.HOE);
-									if (modifiedState != null && !curWorld.isClientSide) {
-										curWorld.setBlock(targetPos, modifiedState, 11);
-									}
-								}
-							}
-						}
-					}
-
-					return ActionResultType.sidedSuccess(curWorld.isClientSide);
-				}
-			}
-
-			return ActionResultType.PASS;
-		}
 	}
 
 	public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> items) {
@@ -129,6 +84,11 @@ public class MeganiumHoeItem extends HoeItem implements IAutoEnchantable, ICATie
 	@Override
 	public Supplier<IntValue> getActualAttackDamage() {
 		return configDmg;
+	}
+
+	@Override
+	public float getDamage() {
+		return getActualAttackDamage().get().get();
 	}
 
 	@Override
@@ -173,7 +133,7 @@ public class MeganiumHoeItem extends HoeItem implements IAutoEnchantable, ICATie
 
 	@Override
 	public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
-		EntityUtil.applyReachModifierToEntity(entity, stack, (float) this.getActualAttackDamage().get().get());
+		EntityUtil.applyReachModifierToEntity(entity, stack, getDamage());
 		return super.onEntitySwing(stack, entity);
 	}
 }

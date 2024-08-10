@@ -4,7 +4,6 @@ import cf.revstudios.purechaos.PureChaos;
 import cf.revstudios.purechaos.registry.PCBlocks;
 import cf.revstudios.purechaos.registry.PCItems;
 import io.github.chaosawakens.common.registry.CAItems;
-import net.minecraft.block.Blocks;
 import net.minecraft.data.*;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
@@ -45,8 +44,8 @@ public class PCRecipeProvider extends RecipeProvider {
 
 		ShapedRecipeBuilder.shaped(PCBlocks.MEGANIUM_BLOCK.get()).define('#', PCItems.MEGANIUM_INGOT.get()).pattern("###").pattern("###").pattern("###").unlockedBy("has_" + PCItems.MEGANIUM_INGOT.get(), has(PCItems.MEGANIUM_INGOT.get())).save(consumer);
 		ShapelessRecipeBuilder.shapeless(PCItems.MEGANIUM_INGOT.get(), 9).requires(PCBlocks.MEGANIUM_BLOCK.get()).unlockedBy("has_" + PCBlocks.MEGANIUM_BLOCK.get().asItem(), has(PCBlocks.MEGANIUM_BLOCK.get())).save(consumer, "purechaos:" + PCBlocks.MEGANIUM_BLOCK.get().asItem() + "_from_block");
-		ShapedRecipeBuilder.shaped(PCBlocks.GALACTITE_DUST_BLOCK.get()).define('#', PCItems.GALACTITE_DUST.get()).pattern("###").pattern("###").pattern("###").unlockedBy("has_" + PCItems.GALACTITE_DUST.get(), has(PCItems.GALACTITE_DUST.get())).save(consumer);
-		ShapelessRecipeBuilder.shapeless(PCItems.GALACTITE_DUST.get(), 9).requires(PCBlocks.GALACTITE_DUST_BLOCK.get()).unlockedBy("has_" + PCBlocks.GALACTITE_DUST_BLOCK.get().asItem(), has(PCBlocks.GALACTITE_DUST_BLOCK.get())).save(consumer, "purechaos:" + PCBlocks.GALACTITE_DUST_BLOCK.get().asItem() + "_from_block");
+		ShapedRecipeBuilder.shaped(PCBlocks.GALACTITE_DUST_BLOCK.get()).define('#', PCItems.GALACTITE_DUST.get()).pattern("##").pattern("##").unlockedBy("has_" + PCItems.GALACTITE_DUST.get(), has(PCItems.GALACTITE_DUST.get())).save(consumer);
+		ShapelessRecipeBuilder.shapeless(PCItems.GALACTITE_DUST.get(), 4).requires(PCBlocks.GALACTITE_DUST_BLOCK.get()).unlockedBy("has_" + PCBlocks.GALACTITE_DUST_BLOCK.get().asItem(), has(PCBlocks.GALACTITE_DUST_BLOCK.get())).save(consumer, "purechaos:" + PCBlocks.GALACTITE_DUST_BLOCK.get().asItem() + "_from_block");
 		ShapedRecipeBuilder.shaped(PCBlocks.GALACTITE_BLOCK.get()).define('#', PCItems.GALACTITE.get()).pattern("###").pattern("###").pattern("###").unlockedBy("has_" + PCItems.GALACTITE.get(), has(PCItems.GALACTITE.get())).save(consumer);
 		ShapelessRecipeBuilder.shapeless(PCItems.GALACTITE.get(), 9).requires(PCBlocks.GALACTITE_BLOCK.get()).unlockedBy("has_" + PCBlocks.GALACTITE_BLOCK.get().asItem(), has(PCBlocks.GALACTITE_BLOCK.get())).save(consumer, "purechaos:" + PCBlocks.GALACTITE_BLOCK.get().asItem() + "_from_block");
 
@@ -63,8 +62,6 @@ public class PCRecipeProvider extends RecipeProvider {
 		ShapedRecipeBuilder.shaped(PCItems.MEGANIUM_LEGGINGS.get()).define('#', PCItems.MEGANIUM_INGOT.get()).define('$', CAItems.ULTIMATE_LEGGINGS.get()).pattern("###").pattern("#$#").pattern("# #").unlockedBy("has_" + PCItems.MEGANIUM_INGOT.get(), has(PCItems.MEGANIUM_INGOT.get())).unlockedBy("has_" + CAItems.ULTIMATE_LEGGINGS.get(), has(CAItems.ULTIMATE_LEGGINGS.get())).save(consumer);
 		ShapedRecipeBuilder.shaped(PCItems.MEGANIUM_BOOTS.get()).define('#', PCItems.MEGANIUM_INGOT.get()).define('$', CAItems.ULTIMATE_BOOTS.get()).pattern("#$#").pattern("# #").unlockedBy("has_" + PCItems.MEGANIUM_INGOT.get(), has(PCItems.MEGANIUM_INGOT.get())).unlockedBy("has_" + CAItems.ULTIMATE_BOOTS.get(), has(CAItems.ULTIMATE_BOOTS.get())).save(consumer);
 
-		smeltingNamed(consumer, PCBlocks.GALACTITE_ORE.get(), PCItems.GALACTITE.get(), 0.1F, 200, "purechaos:" + PCItems.GALACTITE.get() + "_from_smelting_ore");
-		blastingNamed(consumer, PCBlocks.GALACTITE_ORE.get(), PCItems.GALACTITE.get(), 0.1F, 100, "purechaos:" + PCItems.GALACTITE.get() + "_from_blasting_ore");
 		smeltingNamed(consumer, PCItems.GALACTITE_DUST.get(), PCItems.GALACTITE.get(), 0.1F, 200, "purechaos:" + PCItems.GALACTITE.get() + "_from_smelting_dust");
 		blastingNamed(consumer, PCItems.GALACTITE_DUST.get(), PCItems.GALACTITE.get(), 0.1F, 100, "purechaos:" + PCItems.GALACTITE.get() + "_from_blasting_dust");
 		smelting(consumer, PCBlocks.MEGANIUM_ORE.get(), PCItems.MEGANIUM_CHUNK.get(), 0.1F, 200);

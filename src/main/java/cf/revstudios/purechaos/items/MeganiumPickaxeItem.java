@@ -1,80 +1,161 @@
 package cf.revstudios.purechaos.items;
 
-import com.google.gson.JsonObject;
-import io.github.chaosawakens.common.items.UltimatePickaxeItem;
+import cf.revstudios.purechaos.enums.PCItemTier;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
+import io.github.chaosawakens.api.item.IAutoEnchantable;
+import io.github.chaosawakens.api.item.ICATieredItem;
+import io.github.chaosawakens.common.util.EntityUtil;
+import io.github.chaosawakens.manager.CAConfigManager;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.CampfireBlock;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.EnchantmentData;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.IItemTier;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.AbstractCookingRecipe;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.conditions.ILootCondition;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
-import net.minecraftforge.common.loot.LootModifier;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.*;
+import net.minecraft.util.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec.IntValue;
+import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.common.ToolType;
+import net.minecraftforge.common.util.Lazy;
 
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
-public class MeganiumPickaxeItem extends UltimatePickaxeItem {
-	public MeganiumPickaxeItem(IItemTier tier, int attackDamageIn, float attackSpeedIn, Properties builderIn, EnchantmentData[] enchantments) {
-		super(tier, attackDamageIn, attackSpeedIn, builderIn, enchantments);
+public class MeganiumPickaxeItem extends PickaxeItem implements IAutoEnchantable, ICATieredItem {
+	private final Supplier<EnchantmentData[]> enchantments;
+	private Supplier<IntValue> configDmg;
+	private float attackSpeed;
+	private double reach;
+	private Lazy<? extends Multimap<Attribute, AttributeModifier>> attributeModMapLazy = Lazy.of(() -> {
+		ImmutableMultimap.Builder<Attribute, AttributeModifier> attrModMapBuilder = ImmutableMultimap.builder();
+
+		attrModMapBuilder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", getActualAttackDamage().get().get() - 1, AttributeModifier.Operation.ADDITION));
+		attrModMapBuilder.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", getAttackSpeed(), AttributeModifier.Operation.ADDITION));
+		if (ForgeMod.REACH_DISTANCE.isPresent()) attrModMapBuilder.put(ForgeMod.REACH_DISTANCE.get(), new AttributeModifier(ICATieredItem.getReachUUIDMod(), "Weapon modifier", getReach(), AttributeModifier.Operation.ADDITION));
+
+		return attrModMapBuilder.build();
+	});
+
+	public MeganiumPickaxeItem(PCItemTier pTier, Supplier<IntValue> configDmg, float pAttackSpeedModifier, Properties pProperties, Supplier<EnchantmentData[]> enchantments) {
+		super(pTier, pTier.getAttackDamageMod(), pAttackSpeedModifier, pProperties);
+		this.configDmg = configDmg;
+		this.attackSpeed = pAttackSpeedModifier;
+		this.reach = 0;
+		this.enchantments = enchantments;
 	}
 
-	public boolean isFireResistant() {
-		return true;
+	public void appendHoverText(ItemStack stack, World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+		if (CAConfigManager.MAIN_CLIENT.enableTooltips.get()) {
+			super.appendHoverText(stack, world, tooltip, flag);
+			tooltip.add((new StringTextComponent("Tool Bonus: ")).withStyle(TextFormatting.GOLD).append((new StringTextComponent("Autosmelt")).withStyle(TextFormatting.BLUE)).append((new StringTextComponent(" (...)")).withStyle(TextFormatting.GREEN)));
+			if (Screen.hasShiftDown() || Screen.hasControlDown()) {
+				tooltip.removeIf((s) -> s.toString().contains("(...)"));
+				tooltip.add((new StringTextComponent("Tool Bonus: ")).withStyle(TextFormatting.GOLD).append((new StringTextComponent("Autosmelt")).withStyle(TextFormatting.BLUE)).append((new StringTextComponent("\nWhen crouching, any blocks broken by the Meganium Pickaxe will be smelted (where applicable). Fortune modifiers also apply to the resulting items.")).withStyle(TextFormatting.GREEN)));
+			}
+
+			if (!(Boolean)CAConfigManager.MAIN_COMMON.enableUltimatePickaxeBonus.get()) {
+				tooltip.add((new StringTextComponent("This tool bonus is disabled in the config!")).withStyle(TextFormatting.RED).withStyle(TextFormatting.BOLD));
+			}
+
+		}
 	}
 
-	public float getXpRepairRatio(ItemStack stack) {
-		return 20.0F;
+	public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> items) {
+		if (this.allowdedIn(group)) {
+			ItemStack swordStack = new ItemStack(this);
+
+			if (CAConfigManager.MAIN_COMMON.enableAutoEnchanting.get()) {
+				for (EnchantmentData curEnch : enchantments.get()) {
+					swordStack.enchant(curEnch.enchantment, curEnch.level);
+				}
+			}
+
+			items.add(swordStack);
+		}
 	}
 
-	public static class MeganiumAutoSmeltingModifier extends LootModifier {
-		public MeganiumAutoSmeltingModifier(ILootCondition[] conditionsIn) {
-			super(conditionsIn);
-		}
-
-		protected final ItemStack getSmeltedOutput(LootContext context, ItemStack stack) {
-			return context.getLevel() != null ? (ItemStack)context.getLevel().getRecipeManager().getRecipeFor(IRecipeType.SMELTING, new Inventory(new ItemStack[]{stack}), context.getLevel()).map(AbstractCookingRecipe::getResultItem).filter((itemStack) -> {
-				return !itemStack.isEmpty();
-			}).map((itemStack) -> {
-				return copyStackWithSize(itemStack, stack.getCount());
-			}).orElse(stack) : stack;
-		}
-
-		@Nonnull
-		public static ItemStack copyStackWithSize(@Nonnull ItemStack itemStack, int size) {
-			if (size == 0) {
-				return ItemStack.EMPTY;
-			} else {
-				ItemStack copy = itemStack.copy();
-				copy.setCount(size);
-				return copy;
+	public void onCraftedBy(ItemStack itemStack, World world, PlayerEntity playerEntity) {
+		if (CAConfigManager.MAIN_COMMON.enableAutoEnchanting.get()) {
+			for (EnchantmentData curEnch : enchantments.get()) {
+				if (curEnch.level == 0) itemStack.enchant(curEnch.enchantment, curEnch.level);
 			}
 		}
+	}
 
-		@Nonnull
-		protected List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
-			ArrayList<ItemStack> stackArrayList = new ArrayList();
-			generatedLoot.forEach((stack) -> {
-				stackArrayList.add(this.getSmeltedOutput(context, stack));
-			});
-			return stackArrayList;
-		}
+	public boolean isFoil(ItemStack stack) {
+		return CAConfigManager.MAIN_COMMON.enableAutoEnchanting.get() && super.isFoil(stack) || super.isFoil(stack);
+	}
 
-		public static class Serializer extends GlobalLootModifierSerializer<MeganiumAutoSmeltingModifier> {
-			public Serializer() {
-			}
+	public EnchantmentData[] getEnchantments() {
+		return this.enchantments.get();
+	}
 
-			public MeganiumAutoSmeltingModifier read(ResourceLocation name, JsonObject json, ILootCondition[] conditionsIn) {
-				return new MeganiumAutoSmeltingModifier(conditionsIn);
-			}
+	@Override
+	public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot, ItemStack stack) {
+		return slot.equals(EquipmentSlotType.MAINHAND) ? attributeModMapLazy.get() : super.getAttributeModifiers(slot, stack);
+	}
 
-			public JsonObject write(MeganiumAutoSmeltingModifier instance) {
-				return this.makeConditions(instance.conditions);
-			}
-		}
+	@Override
+	public Supplier<IntValue> getActualAttackDamage() {
+		return configDmg;
+	}
+
+	@Override
+	public void setAttackDamage(Supplier<IntValue> attackDamage) {
+		this.configDmg = attackDamage;
+	}
+
+	@Override
+	public float getAttackSpeed() {
+		return attackSpeed;
+	}
+
+	@Override
+	public void setAttackSpeed(float attackSpeed) {
+		this.attackSpeed = attackSpeed - 2.4F;
+	}
+
+	@Override
+	public double getReach() {
+		return reach;
+	}
+
+	@Override
+	public void setReach(double reach) {
+		this.reach = reach;
+	}
+
+	@Override
+	public double getAttackKnockback() {
+		return 0;
+	}
+
+	@Override
+	public void setAttackKnockback(double attackKnockback) {
+
+	}
+
+	@Override
+	public void setAttributeModifiers(Lazy<? extends Multimap<Attribute, AttributeModifier>> attributeModMapLazy) {
+		this.attributeModMapLazy = attributeModMapLazy;
+	}
+
+	@Override
+	public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
+		EntityUtil.applyReachModifierToEntity(entity, stack, (float) this.getActualAttackDamage().get().get());
+		return super.onEntitySwing(stack, entity);
 	}
 }

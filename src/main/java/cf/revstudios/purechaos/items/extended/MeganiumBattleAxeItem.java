@@ -1,150 +1,149 @@
 package cf.revstudios.purechaos.items.extended;
 
+import cf.revstudios.purechaos.client.entity.render.MeganiumBattleAxeItemRender;
 import cf.revstudios.purechaos.enums.PCItemTier;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
-import io.github.chaosawakens.api.IAutoEnchantable;
-import io.github.chaosawakens.api.IUtilityHelper;
-import io.github.chaosawakens.common.config.CACommonConfig;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.client.util.InputMappings;
+import io.github.chaosawakens.api.item.IAutoEnchantable;
+import io.github.chaosawakens.api.item.ICATieredItem;
+import io.github.chaosawakens.common.util.EntityUtil;
+import io.github.chaosawakens.manager.CAConfigManager;
+import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.EnchantmentData;
-import net.minecraft.enchantment.IVanishable;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.AxeItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EntityPredicates;
-import net.minecraft.util.Hand;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.item.*;
+import net.minecraft.util.*;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.util.Lazy;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-import java.util.UUID;
+import java.util.function.Supplier;
 
-public class MeganiumBattleAxeItem extends AxeItem implements IAutoEnchantable, IVanishable, IAnimatable, IUtilityHelper {
-	public AnimationFactory factory = new AnimationFactory(this);
-	public static final UUID REACH_MODIFIER = UUID.fromString("4B3447EE-EC65-11EC-8EA0-0242AC120002");
-	public static final UUID KB_MODIFIER = UUID.fromString("516858D0-EC65-11EC-8EA0-0242AC120002");
-	public static int attackDamage;
-	public static int attackSpeed;
-	public static double attackReach;
-	public static double attackKnockback;
-	private final EnchantmentData[] enchantments;
-	public static Lazy<? extends Multimap<Attribute, AttributeModifier>> LAZY = Lazy.of(() -> {
-		ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
-		builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", attackDamage, AttributeModifier.Operation.ADDITION));
-		builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", attackSpeed, AttributeModifier.Operation.ADDITION));
-		if (ForgeMod.REACH_DISTANCE.isPresent()) {
-			builder.put(ForgeMod.REACH_DISTANCE.get(), new AttributeModifier(REACH_MODIFIER, "Weapon modifier", attackReach, AttributeModifier.Operation.ADDITION));
-		}
+public class MeganiumBattleAxeItem extends AxeItem implements IAnimatable, ICATieredItem {
+	private final AnimationFactory factory = new AnimationFactory(this);
+	private final Supplier<EnchantmentData[]> enchantments;
+	private Supplier<IntValue> configDmg;
+	private float attackSpeed;
+	private double reach;
+	private Lazy<? extends Multimap<Attribute, AttributeModifier>> attributeModMapLazy = Lazy.of(() -> {
+		ImmutableMultimap.Builder<Attribute, AttributeModifier> attrModMapBuilder = ImmutableMultimap.builder();
 
-		builder.put(Attributes.ATTACK_KNOCKBACK, new AttributeModifier(KB_MODIFIER, "Weapon modifier", attackKnockback, AttributeModifier.Operation.ADDITION));
-		Multimap<Attribute, AttributeModifier> map = builder.build();
-		return map;
+		attrModMapBuilder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", getActualAttackDamage().get().get() - 1, AttributeModifier.Operation.ADDITION));
+		attrModMapBuilder.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", getAttackSpeed(), AttributeModifier.Operation.ADDITION));
+		if (ForgeMod.REACH_DISTANCE.isPresent()) attrModMapBuilder.put(ForgeMod.REACH_DISTANCE.get(), new AttributeModifier(ICATieredItem.getReachUUIDMod(), "Weapon modifier", getReach(), AttributeModifier.Operation.ADDITION));
+
+		return attrModMapBuilder.build();
 	});
 
-	public MeganiumBattleAxeItem(PCItemTier tierIn, int attackDamageIn, float attackSpeedIn, double attackReachIn, double attackKnockbackIn, Item.Properties builderIn, EnchantmentData[] enchantments) {
-		super(tierIn, (float)attackDamage, attackSpeedIn, builderIn);
-		attackDamage = (int)((float)attackDamageIn + tierIn.getAttackDamageBonus());
-		attackSpeed = (int)attackSpeedIn;
-		attackReach = attackReachIn;
-		attackKnockback = attackKnockbackIn;
+	public MeganiumBattleAxeItem(PCItemTier pTier, Supplier<IntValue> configDmg, float pAttackSpeedModifier, double reach, Properties pProperties, Supplier<EnchantmentData[]> enchantments) {
+		super(pTier, pTier.getAttackDamageMod(), pAttackSpeedModifier, pProperties.setISTER(() -> MeganiumBattleAxeItemRender::new));
+		this.configDmg = configDmg;
+		this.attackSpeed = pAttackSpeedModifier;
+		this.reach = reach;
 		this.enchantments = enchantments;
 	}
 
+	public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> items) {
+		if (this.allowdedIn(group)) {
+			ItemStack swordStack = new ItemStack(this);
+
+			if (CAConfigManager.MAIN_COMMON.enableAutoEnchanting.get()) {
+				for (EnchantmentData curEnch : enchantments.get()) {
+					swordStack.enchant(curEnch.enchantment, curEnch.level);
+				}
+			}
+
+			items.add(swordStack);
+		}
+	}
+
+	public void onCraftedBy(ItemStack itemStack, World world, PlayerEntity playerEntity) {
+		if (CAConfigManager.MAIN_COMMON.enableAutoEnchanting.get()) {
+			for (EnchantmentData curEnch : enchantments.get()) {
+				if (curEnch.level == 0) itemStack.enchant(curEnch.enchantment, curEnch.level);
+			}
+		}
+	}
+
+	public boolean isFoil(ItemStack stack) {
+		return CAConfigManager.MAIN_COMMON.enableAutoEnchanting.get() && super.isFoil(stack) || super.isFoil(stack);
+	}
+
+	public EnchantmentData[] getEnchantments() {
+		return this.enchantments.get();
+	}
+
+	@Override
 	public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot, ItemStack stack) {
-		return slot == EquipmentSlotType.MAINHAND ? LAZY.get() : super.getAttributeModifiers(slot, stack);
+		return slot.equals(EquipmentSlotType.MAINHAND) ? attributeModMapLazy.get() : super.getAttributeModifiers(slot, stack);
+	}
+
+	@Override
+	public Supplier<IntValue> getActualAttackDamage() {
+		return configDmg;
+	}
+
+	@Override
+	public void setAttackDamage(Supplier<IntValue> attackDamage) {
+		this.configDmg = attackDamage;
+	}
+
+	@Override
+	public float getAttackSpeed() {
+		return attackSpeed;
+	}
+
+	@Override
+	public void setAttackSpeed(float attackSpeed) {
+		this.attackSpeed = attackSpeed - 2.4F;
+	}
+
+	@Override
+	public double getReach() {
+		return reach;
+	}
+
+	@Override
+	public void setReach(double reach) {
+		this.reach = reach;
+	}
+
+	@Override
+	public double getAttackKnockback() {
+		return 0;
+	}
+
+	@Override
+	public void setAttackKnockback(double attackKnockback) {
+
+	}
+
+	@Override
+	public void setAttributeModifiers(Lazy<? extends Multimap<Attribute, AttributeModifier>> attributeModMapLazy) {
+		this.attributeModMapLazy = attributeModMapLazy;
 	}
 
 	@Override
 	public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
-		InputEvent.ClickInputEvent inputEvent = ForgeHooksClient.onClickInput(1, new KeyBinding("key.attack", InputMappings.Type.MOUSE, 0, "key.categories.gameplay"), Hand.MAIN_HAND);
-		if (entity instanceof PlayerEntity && inputEvent.isAttack()) {
-			double reach = entity.getAttributeValue(ForgeMod.REACH_DISTANCE.get());
-			double reachSqr = reach * reach;
-			World world = entity.level;
-
-			Vector3d viewVec = entity.getViewVector(1.0F);
-			Vector3d eyeVec = entity.getEyePosition(1.0F);
-			Vector3d targetVec = eyeVec.add(viewVec.x * reach, viewVec.y * reach, viewVec.z * reach);
-
-			AxisAlignedBB bb = entity.getBoundingBox().expandTowards(viewVec.scale(reach)).inflate(4.0D, 4.0D, 4.0D);
-			EntityRayTraceResult result = ProjectileHelper.getEntityHitResult(world, entity, eyeVec, targetVec, bb, EntityPredicates.NO_CREATIVE_OR_SPECTATOR);
-
-			if (result == null || !(result.getEntity() instanceof LivingEntity)) return false;
-
-			LivingEntity target = (LivingEntity) result.getEntity();
-
-			double distanceToTargetSqr = entity.distanceToSqr(target);
-
-			boolean resultBool = (result != null ? target : null) != null;
-
-			if (resultBool) {
-				if (reachSqr >= distanceToTargetSqr) {
-					target.hurt(DamageSource.playerAttack((PlayerEntity) entity), attackDamage);
-					this.hurtEnemy(stack, target, entity);
-				}
-			}
-		}
+		EntityUtil.applyReachModifierToEntity(entity, stack, (float) this.getActualAttackDamage().get().get());
 		return super.onEntitySwing(stack, entity);
 	}
 
-	@Override
-	public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> items) {
-		if (allowdedIn(group)) {
-			ItemStack stack = new ItemStack(this);
-			if (CACommonConfig.COMMON.enableAutoEnchanting.get()) {
-				for (EnchantmentData enchant : enchantments) {
-					stack.enchant(enchant.enchantment, enchant.level);
-				}
-			}
-			items.add(stack);
-		}
-	}
-
-	@Override
-	public void onCraftedBy(ItemStack itemStack, World world, PlayerEntity playerEntity) {
-		if (CACommonConfig.COMMON.enableAutoEnchanting.get()) {
-			for (EnchantmentData enchant : enchantments) {
-				itemStack.enchant(enchant.enchantment, enchant.level);
-			}
-		}
-	}
-
-	@Override
-	public boolean isFoil(ItemStack stack) {
-		return CACommonConfig.COMMON.enableAutoEnchanting.get() && super.isFoil(stack) || super.isFoil(stack);
-	}
-
-	@Override
-	public EnchantmentData[] enchantments() {
-		return this.enchantments;
-	}
-
-	@Override
 	public void registerControllers(AnimationData data) {
-		// insert controllers here
 	}
 
-	@Override
 	public AnimationFactory getFactory() {
 		return this.factory;
 	}

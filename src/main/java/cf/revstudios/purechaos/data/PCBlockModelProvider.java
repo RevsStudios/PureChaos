@@ -13,7 +13,6 @@ public class PCBlockModelProvider extends BlockModelProvider {
 
 	@Override
 	protected void registerModels() {
-		this.cubeAll("galactite_ore", pureChaosRL("galactite_ore"));
 		this.cubeAll("galactite_dust_block", pureChaosRL("galactite_dust_block"));
 		this.cubeAll("galactite_block", pureChaosRL("galactite_block"));
 		this.cubeAll("meganium_ore", pureChaosRL("meganium_ore"));

@@ -1,7 +1,7 @@
 package cf.revstudios.purechaos.registry;
 
 import cf.revstudios.purechaos.PureChaos;
-import io.github.chaosawakens.common.blocks.CAOreBlock;
+import io.github.chaosawakens.common.blocks.ore.CAOreBlock;
 import io.github.chaosawakens.common.registry.CAItemGroups;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -24,8 +24,7 @@ public class PCBlocks {
 	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, PureChaos.MODID);
 	public static final DeferredRegister<Item> ITEM_BLOCKS = DeferredRegister.create(ForgeRegistries.ITEMS, PureChaos.MODID);
 
-	public static final RegistryObject<CAOreBlock> GALACTITE_ORE = registerBlock("galactite_ore", () -> new CAOreBlock(Block.Properties.of(Material.STONE).strength(9F, 3.5F).harvestLevel(5).harvestTool(ToolType.PICKAXE).requiresCorrectToolForDrops().sound(SoundType.STONE)), PCItems.RARITY_GALACTITE, CAItemGroups.BLOCKS);
-	public static final RegistryObject<Block> GALACTITE_DUST_BLOCK = registerBlock("galactite_dust_block", () -> new Block(Block.Properties.of(Material.METAL, MaterialColor.COLOR_PINK).strength(12F, 3.5F).harvestLevel(5).harvestTool(ToolType.PICKAXE).requiresCorrectToolForDrops().sound(SoundType.METAL)), PCItems.RARITY_GALACTITE, CAItemGroups.BLOCKS);
+	public static final RegistryObject<Block> GALACTITE_DUST_BLOCK = registerBlock("galactite_dust_block", () -> new Block(Block.Properties.of(Material.METAL, MaterialColor.COLOR_PINK).strength(12F, 3.5F).harvestLevel(5).harvestTool(ToolType.SHOVEL).requiresCorrectToolForDrops().sound(SoundType.METAL)), PCItems.RARITY_GALACTITE, CAItemGroups.BLOCKS);
 	public static final RegistryObject<Block> GALACTITE_BLOCK = registerBlock("galactite_block", () -> new Block(Block.Properties.of(Material.METAL, MaterialColor.COLOR_PINK).strength(12F, 3.5F).harvestLevel(5).harvestTool(ToolType.PICKAXE).requiresCorrectToolForDrops().sound(SoundType.METAL)), PCItems.RARITY_GALACTITE, CAItemGroups.BLOCKS);
 
 	public static final RegistryObject<CAOreBlock> MEGANIUM_ORE = registerBlock("meganium_ore", () -> new CAOreBlock(Block.Properties.of(Material.STONE).strength(12F, 3.5F).harvestLevel(6).harvestTool(ToolType.PICKAXE).requiresCorrectToolForDrops().sound(SoundType.STONE)), PCItems.RARITY_MEGANIUM, CAItemGroups.BLOCKS);

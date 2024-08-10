@@ -1,9 +1,9 @@
 package cf.revstudios.purechaos.items;
 
-import cf.revstudios.purechaos.config.PCConfig;
-import io.github.chaosawakens.common.config.CACommonConfig;
-import io.github.chaosawakens.common.entity.projectile.UltimateArrowEntity;
-import io.github.chaosawakens.common.items.UltimateBowItem;
+import cf.revstudios.purechaos.config.PCServerConfig;
+import io.github.chaosawakens.common.entity.projectile.arrow.UltimateArrowEntity;
+import io.github.chaosawakens.common.items.weapons.ranged.UltimateBowItem;
+import io.github.chaosawakens.manager.CAConfigManager;
 import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
@@ -18,11 +18,14 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
 
+import java.util.function.Supplier;
+
 public class MeganiumBowItem extends UltimateBowItem {
-	public MeganiumBowItem(Properties builderIn, EnchantmentData[] enchantments) {
+	public MeganiumBowItem(Properties builderIn, Supplier<EnchantmentData[]> enchantments) {
 		super(builderIn, enchantments);
 	}
 
+	@Override
 	public void releaseUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {
 		if (entityLiving instanceof PlayerEntity) {
 			PlayerEntity playerentity = (PlayerEntity)entityLiving;
@@ -36,14 +39,14 @@ public class MeganiumBowItem extends UltimateBowItem {
 				arrowEntity.setCritArrow(true);
 				arrowEntity.setSecondsOnFire(EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FLAMING_ARROWS, stack) > 0 ? 250 : 75);
 				int powerLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.POWER_ARROWS, stack);
-				if (!(Boolean) CACommonConfig.COMMON.enableAutoEnchanting.get()) {
-					arrowEntity.setBaseDamage(PCConfig.COMMON.meganiumBowArrowBaseDamage.get() + (double)powerLevel * PCConfig.COMMON.meganiumBowArrowDamageMultiplier.get() + 2.0D);
+				if (!(Boolean) CAConfigManager.MAIN_COMMON.enableAutoEnchanting.get()) {
+					arrowEntity.setBaseDamage(PCServerConfig.SERVER.meganiumBowArrowBaseDamage.get() + (double)powerLevel * PCServerConfig.SERVER.meganiumBowArrowDamageMultiplier.get() + 2.0D);
 				} else {
-					arrowEntity.setBaseDamage(PCConfig.COMMON.meganiumBowArrowBaseDamage.get() + 3.0D);
+					arrowEntity.setBaseDamage(PCServerConfig.SERVER.meganiumBowArrowBaseDamage.get() + 3.0D);
 				}
 
 				int k = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.PUNCH_ARROWS, stack);
-				arrowEntity.setKnockback(!(Boolean)CACommonConfig.COMMON.enableAutoEnchanting.get() ? k + 1 : 1);
+				arrowEntity.setKnockback(!(Boolean)CAConfigManager.MAIN_COMMON.enableAutoEnchanting.get() ? k + 1 : 1);
 				if (!playerentity.isCreative()) {
 					stack.hurtAndBreak(1, entityLiving, (entity) -> entity.broadcastBreakEvent(EquipmentSlotType.MAINHAND));
 				}

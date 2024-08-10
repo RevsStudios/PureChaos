@@ -2,11 +2,15 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "rolls": 1,
+      "rolls": {
+        "min": 1.0,
+        "max": 4.0,
+        "type": "minecraft:uniform"
+      },
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "purechaos:galactite_dust_block"
+          "name": "purechaos:galactite_dust"
         }
       ],
       "conditions": [

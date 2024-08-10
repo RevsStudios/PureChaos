@@ -12,7 +12,6 @@ public class PCBlockStateProvider extends BlockStateProvider {
 
 	@Override
 	protected void registerStatesAndModels() {
-		this.simpleBlock(PCBlocks.GALACTITE_ORE.get());
 		this.simpleBlock(PCBlocks.GALACTITE_DUST_BLOCK.get());
 		this.simpleBlock(PCBlocks.GALACTITE_BLOCK.get());
 		this.simpleBlock(PCBlocks.MEGANIUM_ORE.get());
